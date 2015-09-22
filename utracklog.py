@@ -26,7 +26,7 @@ class SimpleKMLSink:
             self.kml.save(self.filenamebase + self.kml_filename)
         del self.kml
 
-        self.kml_filename = time.strftime("%Y_%m_%d_%H%M%S", time.localtime()) + binascii.hexlify(os.urandom(16)) + ".kml"
+        self.kml_filename = time.strftime("%Y_%m_%d_%H%M%S", time.localtime()) + binascii.hexlify(os.urandom(16)).decode("ascii") + ".kml"
         self.kml = simplekml.Kml()
         self.kml.document.name = self.kml_filename;
 
