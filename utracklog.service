@@ -1,0 +1,13 @@
+[Unit]
+Description=Gps server logger
+After=network.target
+
+[Service]
+User=nobody	
+ExecStart=/srv/gps/utracklog.py -t 3600 -l /srv/gps/logs/ -d /srv/gps/data/
+Restart=on-abort
+
+
+[Install]
+WantedBy=multi-user.target 
+
