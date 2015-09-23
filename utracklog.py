@@ -10,7 +10,6 @@ import simplekml
 import socket
 import socketserver
 
-
 class SimpleKMLSink:
     def __init__ (self, folder, devid, rotation_time, rotation_bytes, rotation_points):
         self.filenamebase = folder + devid + "/kml/"
@@ -24,7 +23,7 @@ class SimpleKMLSink:
     def openfile(self):
         if self.kml:
             self.kml.save(self.filenamebase + self.kml_filename)
-        del self.kml
+            del self.kml
 
         self.kml_filename = time.strftime("%Y_%m_%d_%H%M%S", time.localtime()) + binascii.hexlify(os.urandom(16)).decode("ascii") + ".kml"
         self.kml = simplekml.Kml()
@@ -108,6 +107,24 @@ class SimpleKMLSink:
             self.time_begin = self.time_last
 
     def close(self):
+        self.kml.save(self.filenamebase + self.kml_filename)
+
+
+
+class SimpleKMLRoll(SimpleKMLSink):
+    def __init__ (self, folder, devid, rotation_time, rotation_bytes, rotation_points):
+        super(SimpleKMLRoll, self).__init__(folder, devid, rotation_time, rotation_bytes, rotation_points)
+        self.kml_filename =  "live" + ".kml"
+
+    def openfile(self):
+        if self.kml:
+            del self.kml
+
+        self.kml = simplekml.Kml()
+        self.kml.document.name = self.kml_filename;
+
+    def write(self, data):
+        super(SimpleKMLRoll, self).write(data)
         self.kml.save(self.filenamebase + self.kml_filename)
 
 
@@ -302,7 +319,7 @@ if __name__ == "__main__":
     # env
     ENV_LOG_FOLDER = "./"
     ENV_DATA_FOLDER = "./DATA/"
-    ENV_SINKS = [RawFileSink, SimpleKMLSink]
+    ENV_SINKS = [RawFileSink, SimpleKMLSink, SimpleKMLRoll]
     ENV_ROTATION_TIME = 0
     ENV_ROTATION_BYTES = 0
     ENV_ROTATION_POINTS = 0
